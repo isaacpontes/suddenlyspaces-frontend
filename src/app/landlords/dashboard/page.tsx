@@ -7,6 +7,7 @@ import Select from "@/components/common/Select";
 import CreatePropertyModal from "@/components/landlords/CreatePropertyModal";
 import DashboardPropertiesGrid from "@/components/landlords/DashboardPropertiesGrid";
 import EditPropertyModal from "@/components/landlords/EditPropertyModal";
+import ShowPropertyModal from "@/components/landlords/ShowPropertyModal";
 import { usePropertiesManager } from "@/contexts/PropertiesManagerContext";
 import { Property } from "@/services/landlords/property";
 import { useState } from "react";
@@ -28,8 +29,14 @@ export default function DashboardPage() {
   } = usePropertiesManager();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isShowModalOpen, setIsShowModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentProperty, setCurrentProperty] = useState<Property | null>(null);
+
+  const openShowModal = (property: Property) => {
+    setCurrentProperty(property);
+    setIsShowModalOpen(true);
+  };
 
   const openEditModal = (property: Property) => {
     setCurrentProperty(property);
@@ -56,9 +63,10 @@ export default function DashboardPage() {
   return (
     <PageContainer>
       <CreatePropertyModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
+      <ShowPropertyModal property={currentProperty} isOpen={isShowModalOpen} onClose={() => setIsShowModalOpen(false)} />
       <EditPropertyModal property={currentProperty} isOpen={isEditModalOpen} onClose={finishEditing} />
 
-      <div className="mx-auto my-8 max-w-6xl">
+      <div className="mx-auto my-8">
         <header className="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <h1 className="text-2xl font-semibold text-gray-800">Your Properties</h1>
 
@@ -98,7 +106,8 @@ export default function DashboardPage() {
           <>
             <DashboardPropertiesGrid
               properties={properties}
-              onEdit={(property) => openEditModal(property)}
+              onShow={openShowModal}
+              onEdit={openEditModal}
               onDelete={(property) => deleteProperty(property._id)}
             />
 

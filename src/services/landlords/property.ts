@@ -28,6 +28,14 @@ interface GetPropertiesResponseBody {
   }
 }
 
+export interface PropertyDetails extends Property {
+  interestedTenants: {
+    _id: string;
+    name: string;
+    riskScore: number;
+  }[]
+}
+
 interface CreatePropertyInput {
   title: string;
   location: string;
@@ -57,12 +65,16 @@ const LandlordPropertyService = {
     return res.json();
   },
 
-  async getPropertyById(id: string): Promise<{ property: Property }> {
-    const res = await fetch(`${API_BASE}/${id}`, {
-      headers: { "Content-Type": "application/json" },
+  async getPropertyDetails(landlordToken:string, propertyId: string): Promise<PropertyDetails> {
+    const res = await fetch(`${API_BASE}/${propertyId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${landlordToken}`
+      },
     });
 
-    if (!res.ok) throw new Error("Property not found");
+    if (!res.ok) throw new Error("Failed to fetch property " + propertyId);
+    
     return res.json();
   },
 
