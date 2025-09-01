@@ -36,18 +36,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const checkAuth = async () => {
       const savedToken = localStorage.getItem("accessToken");
+      const savedUser: User | null = JSON.parse(localStorage.getItem("user") ?? "null");
+      if (!savedToken || !savedUser) return setLoading(false);
 
-      if (savedToken) {
-        try {
-          const response = await LandlordAuthService.me(savedToken);
+      try {
+        let response
+        if (savedUser.role === "landlord") {
+          response = await LandlordAuthService.me(savedToken);
           setUser(response.landlord);
           setToken(savedToken);
           localStorage.setItem("user", JSON.stringify(response.landlord));
-        } catch (err) {
-          logout();
-          router.push("/auth/login");
+        } else {
+          response = await TenantAuthService.me(savedToken);
+          setUser(response.tenant);
+          setToken(savedToken);
+          localStorage.setItem("user", JSON.stringify(response.tenant));
         }
+      } catch (err) {
+        logout();
+        router.push("/auth/login");
       }
+
       setLoading(false);
     };
 
