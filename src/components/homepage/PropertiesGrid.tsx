@@ -1,7 +1,11 @@
+"use client"
+
+import { useState } from "react";
 import { Property } from "@/services/tenants/property"
 import { FetchPropertiesFilters } from "@/services/tenants/property";
 import Button from "../common/Button"
 import Link from "next/link";
+import PropertyModal from "./PropertyModal";
 
 interface PropertiesGridProps {
   properties: Property[];
@@ -15,19 +19,29 @@ interface PropertiesGridProps {
 }
 
 export default function PropertiesGrid({ properties, pagination, currentFilters }: PropertiesGridProps) {
+  const [isPropertyModalOpen, setIsPropertyModalOpen] = useState(false);
+  const [currentProperty, setCurrentProperty] = useState<Property | null>(null);
+
+  const openPropertyModal = (property: Property) => {
+    setCurrentProperty(property);
+    setIsPropertyModalOpen(true);
+  }
+
+  const closePropertyModal = () => {
+    setIsPropertyModalOpen(false);
+    setCurrentProperty(null);
+  }
+
   const { page, totalPages } = pagination;
 
   const buildUrl = (newPage: number) => {
-    const params = new URLSearchParams({
-      ...currentFilters,
-      page: String(newPage),
-    });
-
+    const params = new URLSearchParams({ ...currentFilters, page: String(newPage) });
     return `/?${params.toString()}`;
   };
 
   return (
     <>
+      <PropertyModal isOpen={isPropertyModalOpen} onClose={closePropertyModal} property={currentProperty} />
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {properties.length > 0 ? (
           properties.map((property) => (
@@ -46,7 +60,7 @@ export default function PropertiesGrid({ properties, pagination, currentFilters 
                   💰 ${property.rentAmount.toLocaleString()} /{" "}
                   {property.leaseType}
                 </p>
-                <Button className="w-full">View Details</Button>
+                <Button className="w-full" onClick={() => openPropertyModal(property)}>View Details</Button>
               </div>
             </div>
           ))
