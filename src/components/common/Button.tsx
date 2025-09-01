@@ -10,8 +10,11 @@ export default function Button({
   children,
   ...props
 }: ButtonProps) {
-  const base =
-    "rounded-md px-4 py-2 text-sm font-medium transition focus:outline-none cursor-pointer";
+  const base = `
+    rounded-md px-4 py-2 text-sm font-medium
+    transition focus:outline-none cursor-pointer
+    disabled:bg-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed
+  `;
   const variants = {
     primary: "bg-gray-800 text-white hover:bg-gray-700",
     secondary: "border border-gray-300 text-gray-600 hover:bg-gray-100 bg-white",

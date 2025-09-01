@@ -7,29 +7,27 @@ import Label from "@/components/common/Label";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const [activeTab, setActiveTab] = useState<"landlord" | "tenant">("tenant");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login, loading } = useAuth();
+  const { register, loading } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    if (activeTab === "landlord") {
-      try {
-        await login(email, password);
-        router.push('/landlords/dashboard');
-      } catch (err: any) {
-        setError(err.message || "Login failed");
-      }
-    } else {
-      /** @TODO: handle tenant login */
-      alert("Tenant login not implemented yet");
+    try {
+      await register(activeTab, { name, email, password });
+      const redirect = activeTab === "landlord" ? "/landlords/dashboard" : "/tenants/dashboard";
+      router.push(redirect);
+    } catch (err: any) {
+      setError(err.message || "Login failed");
     }
   };
 
@@ -37,7 +35,7 @@ export default function LoginPage() {
     <PageContainer>
       <div className="w-full max-w-md rounded-2xl bg-white p-8 mt-16 mx-auto shadow-lg">
         <h1 className="mb-6 text-center text-2xl font-semibold text-gray-800">
-          {activeTab === "landlord" ? "Landlord Login" : "Tenant Login"}
+          Create Your Account
         </h1>
 
         <div className="mb-6 flex border-b border-gray-200">
@@ -75,6 +73,18 @@ export default function LoginPage() {
           )}
 
           <div>
+            <Label text="Name" htmlFor="name" />
+            <Input
+              id="name"
+              type="text"
+              placeholder="Your Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
             <Label text="Email" htmlFor="email" />
             <Input
               id="email"
@@ -107,6 +117,10 @@ export default function LoginPage() {
           {activeTab === "landlord"
             ? "Are you a tenant? Switch above."
             : "Are you a landlord? Switch above."}
+        </p>
+
+        <p className="mt-4 text-center text-xs text-gray-500">
+          Already have an account? <Link href={'/auth/login'} className="text-blue-500 hover:text-blue-700">Sign In</Link>
         </p>
       </div>
     </PageContainer>

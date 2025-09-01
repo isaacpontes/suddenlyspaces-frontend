@@ -27,11 +27,15 @@ export function Header() {
         <Link href={'/'} className="font-bold">SuddenlySpaces</Link>
       </div>
 
-      <nav className="flex gap-2 h-full items-center">
+      <nav className="flex gap-4 h-full items-center">
         {user ? (
           <>
-            <div className="text-gray-500">Olá, {user.name}</div>
-            <HeaderLink href="/landlords/dashboard" text="Landlord Dashboard" />
+            <div className="text-gray-500">{user.name}</div>
+            {user.role === 'landlord' ? (
+              <HeaderLink href="/landlords/dashboard" text="Landlord Dashboard" />
+            ) : (
+              <HeaderLink href="/tenants/dashboard" text="Tentant Dashboard" />
+            )}
             <button
               className="text-red-500 hover:text-red-700 cursor-pointer"
               onClick={handleLogout}
@@ -41,8 +45,8 @@ export function Header() {
           </>
         ) : (
           <>
-            <HeaderLink href="/login" text="Sign in" />
-            <HeaderLink href="/register" text="Sign up" />
+            <HeaderLink href="/auth/login" text="Sign in" />
+            <HeaderLink href="/auth/register" text="Sign up" />
           </>
         )}
       </nav>

@@ -1,25 +1,25 @@
 type LoginResponseBody = {
-  landlord: {
+  tenant: {
     id: string
     name: string
     email: string
-    role: 'landlord'
+    role: 'tenant'
   },
   token: string
 }
 
 type MeResponseBody = {
-  landlord: {
+  tenant: {
     id: string
     name: string
     email: string
-    role: 'landlord'
+    role: 'tenant'
   },
 }
 
-const LandlordAuthService = {
+const TenantAuthService = {
   async login(email: string, password: string): Promise<LoginResponseBody> {
-    const res = await fetch("http://localhost:3000/landlords/login", {
+    const res = await fetch("http://localhost:3000/tenants/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -31,7 +31,7 @@ const LandlordAuthService = {
   },
 
   async register(data: { name: string, email: string, password: string }): Promise<LoginResponseBody> {
-    const res = await fetch("http://localhost:3000/landlords/register", {
+    const res = await fetch("http://localhost:3000/tenants/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data)
@@ -42,11 +42,11 @@ const LandlordAuthService = {
     return res.json();
   },
 
-  async me(landlordToken: string): Promise<MeResponseBody> {
-    const res = await fetch("http://localhost:3000/landlords/me", {
+  async me(tenantToken: string): Promise<MeResponseBody> {
+    const res = await fetch("http://localhost:3000/tenants/me", {
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${landlordToken}`
+        "Authorization": `Bearer ${tenantToken}`
       }
     });
 
@@ -56,4 +56,4 @@ const LandlordAuthService = {
   }
 };
 
-export default LandlordAuthService;
+export default TenantAuthService;
