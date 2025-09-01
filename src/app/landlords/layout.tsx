@@ -1,6 +1,7 @@
 "use client"
 
 import { useAuth } from "@/contexts/AuthContext";
+import { PropertiesManagerProvider } from "@/contexts/PropertiesManagerContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -16,8 +17,8 @@ export default function LandlordsLayout({ children, }: Readonly<{ children: Reac
   if (loading) return <div>Loading...</div>;
 
   return (
-    <>
+    <PropertiesManagerProvider>
       {children}
-    </>
+    </PropertiesManagerProvider>
   );
 }

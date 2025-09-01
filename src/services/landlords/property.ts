@@ -1,5 +1,3 @@
-import { useAuth } from "@/contexts/AuthContext";
-
 export type LeaseType = "coworking" | "residential" | "short-term";
 
 export interface Property {
@@ -20,6 +18,16 @@ interface ListFilters {
   limit?: number;
 }
 
+interface GetPropertiesResponseBody {
+  properties: Property[],
+  pagination: {
+    limit: number,
+    page: number,
+    total: number,
+    totalPages: number
+  }
+}
+
 interface CreatePropertyInput {
   title: string;
   location: string;
@@ -30,11 +38,11 @@ interface CreatePropertyInput {
 const API_BASE = "http://localhost:3000/landlords/properties";
 
 const LandlordPropertyService = {
-  async fetchProperties(landlordToken: string, filters: ListFilters = {}): Promise<{ properties: Property[]; total?: number }> {
+  async fetchProperties(landlordToken: string, filters: ListFilters = {}): Promise<GetPropertiesResponseBody> {
     const params = new URLSearchParams();
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
-        params.append(key, value.toString());
+        params.append(key, value);
       }
     });
 
@@ -76,7 +84,7 @@ const LandlordPropertyService = {
     return res.json();
   },
 
-  async updateProperty(id: string, data: Partial<{
+  async updateProperty(landlordToken: string, id: string, data: Partial<{
     title: string;
     location: string;
     rentAmount: number;
@@ -84,7 +92,10 @@ const LandlordPropertyService = {
   }>): Promise<{ property: Property }> {
     const res = await fetch(`${API_BASE}/${id}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${landlordToken}`
+      },
       body: JSON.stringify(data),
     });
 
@@ -96,10 +107,13 @@ const LandlordPropertyService = {
     return res.json();
   },
 
-  async removeProperty(id: string): Promise<{ message: string }> {
+  async removeProperty(landlordToken: string, id: string): Promise<{ message: string }> {
     const res = await fetch(`${API_BASE}/${id}`, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${landlordToken}`
+      },
     });
 
     if (!res.ok) {
