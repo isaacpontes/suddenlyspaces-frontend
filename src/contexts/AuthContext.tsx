@@ -2,6 +2,7 @@
 
 import LandlordAuthService from "@/services/landlords/auth";
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { useRouter } from "next/navigation";
 
 type Landlord = {
   id: string;
@@ -28,16 +29,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<Landlord | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    const savedToken = localStorage.getItem("accessToken");
-    const savedUser = localStorage.getItem("user");
+    const checkAuth = async () => {
+      const savedToken = localStorage.getItem("accessToken");
 
-    if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
-    }
-    setLoading(false);
+      if (savedToken) {
+        try {
+          const response = await LandlordAuthService.me(savedToken);
+          setUser(response.landlord);
+          setToken(savedToken);
+          localStorage.setItem("user", JSON.stringify(response.landlord));
+        } catch (err) {
+          logout();
+          router.push("/login");
+        }
+      }
+      setLoading(false);
+    };
+
+    checkAuth();
   }, []);
 
   const login = async (email: string, password: string) => {
