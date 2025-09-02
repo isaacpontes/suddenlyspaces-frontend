@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Case SuddenlySpaces Frontend
 
-## Getting Started
+## Overview
 
-First, run the development server:
+For the frontend I went with **Next.js**. Since this is a real estate app that exposes public data (property listings), I wanted to explore how the framework could help with **SEO**, which is important in this kind of product.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+I also intentionally experimented with different features of Next.js within the same project:
+
+* the **homepage** and other public routes are server-component oriented, taking advantage of better performance and SEO friendliness.
+* the **landlords dashboard** is closer to a classic **SPA** experience, with client-side routing, JWT-based authentication and a smoother UI for the logged-in user.
+
+I am aware that Next.js is not an “auto-choice” in production and comes with its own set of troubles. For this case though, I wanted to demonstrate how it could be leveraged in different contexts inside a single app.
+
+The UI was kept simple and functional, focusing more on the architecture and flow than on design polish.
+
+## Run Instructions
+
+Requirements: Node.js and npm installed. The backend API running on http://localhost:3000 (yes, I am aware that i should've created env vars for the url, but I didn't)
+
+1. Clone this repository and access it in the terminal.
 ```
+git clone <this_repo>
+cd suddenlyspaces-frontend
+```
+2. Install the dependencies.
+```
+npm install
+```
+3. Make sure the bakcend is running on [http://localhost:3000/](http://localhost:3000/)
+4. Run the development script.
+```
+npm run dev
+```
+5. Test it by accessing [http://localhost:3001/](http://localhost:3001/) (Next.js should automatically jump to 3001, but yes, we would be better off with a more organized setup)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Improvements for a Production-ready Project
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+There are a lot of things I would improve for a production app. Sorry for the informality but I'm getting tired of typing so I'll leave some general software-related ones:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Environment Variables:** proper handling of secrets and environment-specific configs.
+- **Security:** rethink all auth/authorization flows, input sanitization, token refresh strategy, proper token storage, etc.
+- **Caching & Performance:** consider ISR, SWR or dedicated caching strategies for both server and client (must be think carefully).
+- **Automated Tests:** integration and E2E tests, especially around authentication and forms.
+- **Docker (maybe):** I would dockerize the app for easier setup/deployments.
 
-## Learn More
+and some on the business/features side:
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- richer property pages with photos and videos.
+- more tenant-related information (history, documents).
+- an in-app chat for secure landlord ↔ tenant communication.
+- improved landlord dashboards with analytics and tenant management.
+- better filtering/sorting options for property listings.
